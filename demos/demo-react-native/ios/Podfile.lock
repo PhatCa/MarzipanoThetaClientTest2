@@ -355,6 +355,8 @@ PODS:
     - React-jsi (= 0.71.14)
     - React-logger (= 0.71.14)
     - React-perflogger (= 0.71.14)
+  - rn-fetch-blob (0.12.0):
+    - React-Core
   - RNScreens (3.35.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -403,6 +405,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - theta-client-react-native (from `../node_modules/theta-client-react-native`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -484,6 +487,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  rn-fetch-blob:
+    :path: "../node_modules/rn-fetch-blob"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   theta-client-react-native:
@@ -529,6 +534,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 64e412b9ac684c4edc938fa1187135ada9af7faf
   React-runtimeexecutor: ffe826b7b1cfbc32a35ed5b64d5886c0ff75f501
   ReactCommon: 7f3dd5e98a9ec627c6b03d26c062bf37ea9fc888
+  rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNScreens: 50ad6e3dbea9023272b3aa753e3ee2720b0c9b8f
   theta-client-react-native: 683d88a354d5badd5c18f344958b2d75c641acf6
   THETAClient: b8a28c07d076d3ce33c2b9c67f030297dc146c73
@@ -536,4 +542,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 1db31f88b35bc09c73c93dc318aed047b266c17c
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

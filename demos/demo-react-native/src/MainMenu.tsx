@@ -21,6 +21,7 @@ const MainMenu = ({navigation}) => {
 
   const initTheta = async () => {
     const endpoint = 'http://192.168.1.1';
+    // const endpoint = 'https://fake-theta.vercel.app' // Doesn't connect 
     const config = {
       // clientMode: { // Client mode authentication settings
       //   username: 'THETAXX12345678',

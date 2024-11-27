@@ -1,14 +1,16 @@
-import React from 'react';
-import {View, Image, Text} from 'react-native';
-import styles from './Styles';
+import React, { useState, useEffect, useRef } from 'react';
+import { ActivityIndicator, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { useState, useEffect, useRef } from 'react';
+import ImageResizer from 'react-native-image-resizer';
+import StaticServer from 'react-native-static-server';
 
-
-const PhotoSphere = ({route, navigation}) => {
-  const imageUrl = route.params.item.fileUrl;
-    // const imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/4/43/Cute_dog.jpg'; // this test run
+const PhotoSphere = ({ route, navigation }) => {
+    const imageUrl = route.params.item.fileUrl
+//   const imageUrl = 'https://fake-theta.vercel.app/files/150100525831424d42075b53ce68c300/100RICOH/R0010015.JPG'; // this test run
   const webviewRef = useRef(null);
+  const [compressedImage, setCompressedImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [serverUrl, setServerUrl] = useState<string | null>(null);
 
   const html = `
     <!DOCTYPE html>
@@ -17,9 +19,7 @@ const PhotoSphere = ({route, navigation}) => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>360 Viewer</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/marzipano/0.10.2/marzipano.js" 
-                integrity="sha512-ir2jZ6Hz/Cf+gtVoZGAeKluqMN8xD9IY1vl1/2zL+xGGJfi92roMegfbqoKyZXEc8NALMKP/j/uRRhKuUirVuA==" 
-                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/marzipano/0.10.2/marzipano.js"></script>
         <style>
             #viewer {
                 width: 100%;
@@ -99,27 +99,64 @@ const PhotoSphere = ({route, navigation}) => {
         </script>
     </body>
     </html>
-    `;
+  `;
 
-    const injectedJavaScriptBeforeContentLoaded = `
-    window.imageUrl = "${imageUrl}";
+  const injectedJavaScriptBeforeContentLoaded = `
+    window.imageUrl = "${serverUrl}";
     true;
-`;
+  `;
 
-  React.useEffect(() => {
-    navigation.setOptions({title: route.params.item.name});
-  }, [navigation, route.params.item.name]);
+  useEffect(() => {
+    let server: StaticServer | null = null; // Declare server variable in a shared scope
+
+    ImageResizer.createResizedImage(imageUrl, 4000, 2000, 'JPEG', 100)
+      .then(response => {
+        setLoading(true);
+        setCompressedImage(response.uri);
+
+        // Start a static server
+        server = new StaticServer(8080, Platform.OS === 'ios' ? response.uri.replace('file://', '') : response.uri);
+        server.start().then(url => {
+          setServerUrl(url);
+          setLoading(false);
+        });
+      })
+      .catch(error => {
+        console.error('Error resizing image:', error);
+        setLoading(false);
+      });
+
+      navigation.setOptions({ title: route.params.item.name });
+
+
+    // Cleanup: stop the server if it was started
+    return () => {
+      if (server) {
+        server.stop();
+      }
+    };
+  }, [navigation, route.params.item.name, route.params.item.fileUrl]);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
 
   return (
-    <WebView
-            ref={webviewRef}
-            originWhitelist={['*']}
-            source={{ html }}
-            style={{ flex: 1 }}
-            injectedJavaScriptBeforeContentLoaded={injectedJavaScriptBeforeContentLoaded}
-            onMessage={(event) => console.log("WebView log:", event.nativeEvent.data)}
-            mixedContentMode="compatibility"
+    <>
+      {serverUrl ? (
+        <WebView
+          ref={webviewRef}
+          originWhitelist={['*']}
+          source={{ html }}
+          style={{ flex: 1 }}
+          injectedJavaScriptBeforeContentLoaded={injectedJavaScriptBeforeContentLoaded}
+          onMessage={event => console.log('WebView log:', event.nativeEvent.data)}
+          mixedContentMode="compatibility"
         />
+      ) : (
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
+    </>
   );
 };
 

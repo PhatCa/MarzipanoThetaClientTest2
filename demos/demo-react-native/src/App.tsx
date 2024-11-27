@@ -24,7 +24,7 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
-          options={{title: 'hello3'}}
+          options={{title: 'hello5'}}
           name="main"
           component={MainMenu}
         />

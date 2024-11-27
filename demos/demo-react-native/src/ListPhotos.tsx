@@ -43,7 +43,7 @@ const ListPhotos = ({navigation}) => {
   }, [onRefresh, navigation]);
 
   const onSelect = (item: FileInfo) => {
-    navigation.navigate('sphere', {item: item});
+    navigation.navigate('sphere', {item, key: item.name});
   };
 
   const items = files.map(item => (

@@ -64,7 +64,7 @@ const PhotoSphere = ({ route, navigation }) => {
                     try {
                         const viewer = new Marzipano.Viewer(document.getElementById('viewer'));
                         const source = Marzipano.ImageUrlSource.fromString(window.imageUrl);
-                        const geometry = new Marzipano.EquirectGeometry([{ width: 4000 }]);
+                        const geometry = new Marzipano.EquirectGeometry([{ width: 11008 }]);
                         const limiter = Marzipano.RectilinearView.limit.traditional(4096, 90 * Math.PI / 180);
                         const view = new Marzipano.RectilinearView(null, limiter);
 
@@ -108,7 +108,7 @@ const PhotoSphere = ({ route, navigation }) => {
         setLoading(true); // Set loading state for new image
 
         // Resize the image
-        const response = await ImageResizer.createResizedImage(imageUrl, 4000, 2000, 'JPEG', 100);
+        const response = await ImageResizer.createResizedImage(imageUrl, 11008, 5504, 'JPEG', 100);
         setCompressedImage(response.uri);
 
         // Stop any existing server before starting a new one

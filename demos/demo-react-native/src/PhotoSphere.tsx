@@ -103,62 +103,60 @@ const PhotoSphere = ({ route, navigation }) => {
   useEffect(() => {
     let server: StaticServer | null = null;
 
-    const setupServer = async () => {
-      try {
-        setLoading(true); // Set loading state for new image
+    // const setupServer = async () => {
+    //   try {
+    //     setLoading(true); // Set loading state for new image
 
-        // Resize the image
-        const response = await ImageResizer.createResizedImage(imageUrl, 11008, 5504, 'JPEG', 100);
-        setCompressedImage(response.uri);
+    //     // Resize the image
+    //     // const response = await ImageResizer.createResizedImage(imageUrl, 11008, 5504, 'JPEG', 100);
+    //     // setCompressedImage(response.uri);
 
-        // Stop any existing server before starting a new one
-        if (server) {
-          console.log('Stopping existing server...');
-          await server.stop();
-        }
+    //     // Stop any existing server before starting a new one
+    //     if (server) {
+    //       console.log('Stopping existing server...');
+    //       await server.stop();
+    //     }
 
-        // Start a new static server
-        const port = 8080 + Math.floor(Math.random() * 1000); // Use a random port to avoid conflicts
-        server = new StaticServer(port, Platform.OS === 'ios' ? response.uri.replace('file://', '') : response.uri);
-        const url = await server.start();
-        console.log('Static server started at:', url);
-        setServerUrl(url);
+    //     // Start a new static server
+    //     const port = 8080 + Math.floor(Math.random() * 1000); // Use a random port to avoid conflicts
+    //     server = new StaticServer(port, imageUrl);
+    //     const url = await server.start();
+    //     console.log('Static server started at:', url);
+    //     setServerUrl(url);
 
-        setLoading(false); // Set loading to false when server is ready
-      } catch (error) {
-        console.error('Error setting up server:', error);
-        setLoading(false);
-      }
-    };
+    //     setLoading(false); // Set loading to false when server is ready
+    //   } catch (error) {
+    //     console.error('Error setting up server:', error);
+    //     setLoading(false);
+    //   }
+    // };
 
-    setupServer();
+    // setupServer();
 
     navigation.setOptions({ title: route.params.item.name });
 
     // Cleanup function to stop the server when the component is unmounted or updated
     return () => {
-      if (server) {
-        console.log('Stopping server during cleanup...');
-        server.stop();
+      if (imageUrl) {
+        // console.log('Stopping server during cleanup...');
+        // server.stop();
+        setLoading(false);
       }
     };
   }, [imageUrl, navigation, route.params.item.name]);
 
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
 
   return (
     <>
-      {serverUrl ? (
+      {imageUrl ? (
         <WebView
-          key={serverUrl} // Use serverUrl to force WebView re-render
+        //   key={serverUrl} // Use serverUrl to force WebView re-render
           ref={webviewRef}
           originWhitelist={['*']}
           source={{ html }}
           style={{ flex: 1 }}
           injectedJavaScriptBeforeContentLoaded={`
-            window.imageUrl = "${serverUrl}";
+            window.imageUrl = "${imageUrl}";
             true;
           `}
           onMessage={event => console.log('WebView log:', event.nativeEvent.data)}
